@@ -93,8 +93,8 @@ function installChromeDr(to, version, cb) {
 
 function getDownloadStream(dl, cb) {
   var r =
-    require('http')
-      .request(dl, function(res) {
+    //require('http')
+      http.request(dl, function(res) {
         console.log('Downloading ' + dl);
 
         if (res.statusCode !== 200) {
