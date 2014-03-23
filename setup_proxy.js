@@ -11,15 +11,15 @@ var tunnelingAgent = tunnel.httpsOverHttp({
   }
 });
 
-var https = require('https');
+https = require('https');
 var oldhttpsreq = https.request;
 https.request = function (options, callback) {
   options.agent = tunnelingAgent;
   return oldhttpsreq.call(null, options, callback);
 };
 
-var http = require('http');
-var oldhttpreq = https.request;
+http = require('http');
+var oldhttpreq = http.request;
 http.request = function (options, callback) {
   options.agent = tunnelingAgent;
   return oldhttpreq.call(null, options, callback);
