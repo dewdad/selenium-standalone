@@ -1,9 +1,36 @@
-require('./setup_proxy');
+//require('./setup_proxy');
 var conf = require('./conf.js');
 var async = require('async');
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
 var path = require('path');
+
+if (!process.env.http_proxy) return;
+
+var url    = require('url');
+var tunnel = require('tunnel');
+var proxy = url.parse(process.env.http_proxy);
+
+var tunnelingAgent = tunnel.httpsOverHttp({
+    proxy: {
+        host: proxy.hostname,
+        port: proxy.port
+    }
+});
+
+var https = require('https');
+var oldhttpsreq = https.request;
+https.request = function (options, callback) {
+    options.agent = tunnelingAgent;
+    return oldhttpsreq.call(null, options, callback);
+};
+
+var http = require('http');
+var oldhttpreq = http.request;
+http.request = function (options, callback) {
+    options.agent = tunnelingAgent;
+    return oldhttpreq.call(null, options, callback);
+};
 
 async.series([
   setup,
@@ -103,7 +130,7 @@ function getDownloadStream(dl, cb) {
 
         cb(null, res);
       })
-      .once('error', cb.bind(null, new Error('Could not download ' + dl)))
+      .once('error', cb.bind(null, new Error('Could not download ' + dl)));
 
   // initiate request
   r.end();
