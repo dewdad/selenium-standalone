@@ -1,4 +1,4 @@
-require('./setup_proxy')(true);
+require('./setup_proxy');
 var conf = require('./conf.js');
 var async = require('async');
 var mkdirp = require('mkdirp');
